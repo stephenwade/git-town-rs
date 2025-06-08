@@ -1,11 +1,34 @@
-use std::process::Command;
+use std::process::{Command, Stdio};
+
+use clap::{ArgAction, Command as ClapCommand, arg, command, value_parser};
 
 fn main() {
-    // First step: Figure out how to call another command.
+    // Add a really basic "git-town-rs hack" command.
 
-    // I want to run `git --version` and output the result.
+    let matches = command!()
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .subcommand(
+            ClapCommand::new("hack")
+                .about("Create a new feature branch off the main branch")
+                .arg(arg!(<branch>)),
+        )
+        .get_matches();
 
-    let git_version_output = Command::new("git").arg("--version").output().unwrap();
+    match matches.subcommand() {
+        Some(("hack", sub_matches)) => {
+            let branch_name = sub_matches
+                .get_one::<String>("branch")
+                .expect("argument is required");
 
-    print!("{}", str::from_utf8(&git_version_output.stdout).unwrap())
+            let _ = Command::new("git")
+                .args(["switch", "-c", branch_name])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status();
+        }
+        _ => {
+            unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`")
+        }
+    }
 }
