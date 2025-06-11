@@ -1,34 +1,36 @@
+use clap::{Args, Parser, Subcommand};
 use std::process::{Command, Stdio};
 
-use clap::{ArgAction, Command as ClapCommand, arg, command, value_parser};
+#[derive(Parser)]
+#[command(subcommand_required = true)]
+#[command(arg_required_else_help = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Create a new feature branch off the main branch
+    Hack(HackArgs),
+}
+
+#[derive(Args)]
+struct HackArgs {
+    /// The name of the new feature branch to create
+    branch: String,
+}
 
 fn main() {
-    // Add a really basic "git-town-rs hack" command.
+    let cli = Cli::parse();
 
-    let matches = command!()
-        .subcommand_required(true)
-        .arg_required_else_help(true)
-        .subcommand(
-            ClapCommand::new("hack")
-                .about("Create a new feature branch off the main branch")
-                .arg(arg!(<branch>)),
-        )
-        .get_matches();
-
-    match matches.subcommand() {
-        Some(("hack", sub_matches)) => {
-            let branch_name = sub_matches
-                .get_one::<String>("branch")
-                .expect("argument is required");
-
+    match &cli.command {
+        Commands::Hack(args) => {
             let _ = Command::new("git")
-                .args(["switch", "-c", branch_name])
+                .args(["switch", "-c", &args.branch])
                 .stdout(Stdio::null())
                 .stderr(Stdio::null())
                 .status();
-        }
-        _ => {
-            unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`")
         }
     }
 }
