@@ -1,11 +1,36 @@
-use std::process::Command;
+use clap::{Args, Parser, Subcommand};
+use std::process::{Command, Stdio};
+
+#[derive(Parser)]
+#[command(subcommand_required = true)]
+#[command(arg_required_else_help = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Create a new feature branch off the main branch
+    Hack(HackArgs),
+}
+
+#[derive(Args)]
+struct HackArgs {
+    /// The name of the new feature branch to create
+    branch: String,
+}
 
 fn main() {
-    // First step: Figure out how to call another command.
+    let cli = Cli::parse();
 
-    // I want to run `git --version` and output the result.
-
-    let git_version_output = Command::new("git").arg("--version").output().unwrap();
-
-    print!("{}", str::from_utf8(&git_version_output.stdout).unwrap())
+    match &cli.command {
+        Commands::Hack(args) => {
+            let _ = Command::new("git")
+                .args(["switch", "-c", &args.branch])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status();
+        }
+    }
 }
