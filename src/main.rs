@@ -1,5 +1,9 @@
-use clap::{Args, Parser, Subcommand};
-use std::process::{Command, Stdio};
+mod cmd;
+
+use clap::{Parser, Subcommand};
+use cmd::HackArgs;
+
+use crate::cmd::execute_hack;
 
 #[derive(Parser)]
 #[command(subcommand_required = true)]
@@ -15,22 +19,10 @@ enum Commands {
     Hack(HackArgs),
 }
 
-#[derive(Args)]
-struct HackArgs {
-    /// The name of the new feature branch to create
-    branch: String,
-}
-
 fn main() {
     let cli = Cli::parse();
 
-    match &cli.command {
-        Commands::Hack(args) => {
-            let _ = Command::new("git")
-                .args(["switch", "-c", &args.branch])
-                .stdout(Stdio::null())
-                .stderr(Stdio::null())
-                .status();
-        }
+    match cli.command {
+        Commands::Hack(args) => execute_hack(args),
     }
 }
