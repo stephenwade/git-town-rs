@@ -1,6 +1,7 @@
 mod cli;
 mod cmd;
-mod config_domain;
+mod config;
+mod git;
 
 fn main() {
     cmd::execute();

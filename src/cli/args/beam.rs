@@ -1,6 +1,6 @@
 use clap::{Arg, ArgAction, ArgMatches};
 
-use crate::config_domain;
+use crate::config::config_domain;
 
 const BEAM_LONG: &str = "beam";
 
@@ -9,7 +9,7 @@ pub fn beam_arg() -> Arg {
         .short('b')
         .long(BEAM_LONG)
         .action(ArgAction::SetTrue)
-        .help("Beam some commits from this branch to the new branch")
+        .help("beam some commits from this branch to the new branch")
 }
 
 pub fn read_beam(matches: &ArgMatches) -> config_domain::Beam {
