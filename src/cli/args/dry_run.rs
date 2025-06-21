@@ -1,7 +1,5 @@
 use clap::{Arg, ArgAction, ArgMatches};
 
-use crate::config::config_domain;
-
 const DRY_RUN_LONG: &str = "dry-run";
 
 pub fn dry_run_arg() -> Arg {
@@ -11,6 +9,6 @@ pub fn dry_run_arg() -> Arg {
         .help("print but do not run the Git commands")
 }
 
-pub fn read_dry_run(matches: &ArgMatches) -> config_domain::DryRun {
-    matches.get_flag(DRY_RUN_LONG).into()
+pub fn read_dry_run(matches: &ArgMatches) -> bool {
+    matches.get_flag(DRY_RUN_LONG)
 }

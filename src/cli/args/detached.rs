@@ -1,7 +1,5 @@
 use clap::{Arg, ArgAction, ArgMatches};
 
-use crate::config::config_domain;
-
 const DETACHED_LONG: &str = "detached";
 
 pub fn detached_arg() -> Arg {
@@ -12,6 +10,6 @@ pub fn detached_arg() -> Arg {
         .help("don't update the perennial root branch")
 }
 
-pub fn read_detached(matches: &ArgMatches) -> config_domain::Detached {
-    matches.get_flag(DETACHED_LONG).into()
+pub fn read_detached(matches: &ArgMatches) -> bool {
+    matches.get_flag(DETACHED_LONG)
 }

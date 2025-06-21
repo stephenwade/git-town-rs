@@ -1,8 +1,12 @@
 mod cli;
 mod cmd;
-mod config;
+mod execute;
 mod git;
+mod messages;
+mod misc;
+mod subshell;
 
-fn main() {
-    cmd::execute();
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    cmd::execute()?;
+    Ok(())
 }

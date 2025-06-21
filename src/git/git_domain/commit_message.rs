@@ -1,12 +1,8 @@
 #[derive(Debug)]
-pub struct CommitMessage {
-    message: String,
-}
+pub struct CommitMessage(String);
 
 impl From<&String> for CommitMessage {
     fn from(item: &String) -> Self {
-        CommitMessage {
-            message: item.clone(),
-        }
+        CommitMessage(item.clone())
     }
 }

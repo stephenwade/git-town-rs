@@ -1,6 +1,5 @@
-use clap::{Arg, ArgMatches};
-
 use crate::git::git_domain;
+use clap::{Arg, ArgMatches};
 
 const COMMIT_MESSAGE_LONG: &str = "message";
 

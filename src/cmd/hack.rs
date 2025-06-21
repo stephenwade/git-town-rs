@@ -1,7 +1,6 @@
+use crate::{cli::args, cmd::cmd_helpers, execute};
 use clap::{Arg, ArgMatches};
-
-use crate::cli::args;
-use crate::cmd::cmd_helpers;
+use std::error::Error;
 
 pub const HACK_NAME: &str = "hack";
 
@@ -49,7 +48,7 @@ pub fn hack_cmd() -> clap::Command {
         .arg(args::verbose::verbose_arg())
 }
 
-pub fn execute_hack(matches: &ArgMatches) {
+pub fn execute_hack(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
     let branches: Vec<_> = matches
         .get_many::<String>("branch")
         .unwrap_or_default()
@@ -63,21 +62,14 @@ pub fn execute_hack(matches: &ArgMatches) {
     let prototype = args::prototype::read_prototype(matches);
     let verbose = args::verbose::read_verbose(matches);
 
-    println!("branches: {:?}", branches);
-    println!("beam: {:?}", &beam);
-    println!("commit: {:?}", &commit);
-    println!("commit message: {:?}", &commit_message);
-    println!("detached: {:?}", &detached);
-    println!("dry run: {:?}", &dry_run);
-    println!("propose: {:?}", &propose);
-    println!("prototype: {:?}", &prototype);
-    println!("verbose: {:?}", &verbose);
+    let repo = execute::open_repo::open_repo(execute::open_repo::OpenRepoArgs {
+        dry_run,
+        print_branch_names: true,
+        print_commands: true,
+        validate_git_repo: true,
+        validate_is_online: false,
+        verbose,
+    })?;
 
-    // use std::process::{Command, Stdio};
-    //
-    // _ = Command::new("git")
-    //     .args(["switch", "-c", branch])
-    //     .stdout(Stdio::null())
-    //     .stderr(Stdio::null())
-    //     .status();
+    Ok(())
 }
